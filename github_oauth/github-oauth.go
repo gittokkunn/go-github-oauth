@@ -48,13 +48,14 @@ func LoginHome(c *gin.Context) {
 // Github認証画面にリダイレクト
 func RedirectAuthrize(c *gin.Context) {
 	EnvLoad()
-	RedirectAuthrizeClient(c, ClientID)
+	Scope := ""
+	State := "ss"
+	RedirectAuthrizeClient(c, ClientID, Scope, State)
 }
 
 // クライアントIDを指定してリダイレクト
-func RedirectAuthrizeClient(c *gin.Context, clientID string) {
-	fmt.Println("client_id:" + ClientID)
-	authURL := "https://github.com/login/oauth/authorize?client_id=" + clientID
+func RedirectAuthrizeClient(c *gin.Context, clientID string, scope string, state string) {
+	authURL := "https://github.com/login/oauth/authorize?client_id=" + clientID + "&scope=" + scope + "&state" + state
 	c.Redirect(http.StatusMovedPermanently, authURL)
 }
 
@@ -68,7 +69,6 @@ func GetAccessToken(c *gin.Context) {
 // クライアントID, クライアントパスをしていしてアクセストークンを取得
 func GetAccessTokenClient(c *gin.Context, clientID string, clientSecret string) (*CredentialInfo){
 	code := c.Request.URL.Query().Get("code")
-	fmt.Println("code: " + code)
 	state := c.Request.URL.Query().Get("state")
 	if state == "" {
 		fmt.Println("state is empty")
@@ -77,8 +77,6 @@ func GetAccessTokenClient(c *gin.Context, clientID string, clientSecret string) 
 	values.Add("code", code)
 	values.Add("client_id", clientID)
 	values.Add("client_secret", clientSecret)
-	fmt.Println("client_id:" + clientID)
-	fmt.Println("client_secret:" + clientSecret)
 	req, err := http.NewRequest(
 		"POST",
 		"https://github.com/login/oauth/access_token",
@@ -105,7 +103,6 @@ func GetAccessTokenClient(c *gin.Context, clientID string, clientSecret string) 
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(AccessToken)
 	return cre
 }
 

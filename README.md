@@ -1,7 +1,7 @@
 # Githubのoauth認証
 
 ## About
-### RedirectAuthrizeClient(c *gin.Context, clientID string)
+### RedirectAuthrizeClient(c *gin.Context, clientID string, scope string state string)
 ### GetAccessTokenClient(c *gin.Context, clientID string, clientSecret string) (*CredentialInfo)
 ### CredentialInfo
 ##### `.AccessToken string`
